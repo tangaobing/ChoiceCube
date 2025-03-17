@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>决策魔方 - 选项输入</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .input-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background-color: #f0f2f5;
+        }
+        .header {
+            background-color: white;
+            padding: 16px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 10;
+        }
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+            margin: 0;
+        }
+        .back-btn {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 20px;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            padding-bottom: 160px;
+        }
+        .input-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 10px;
+        }
+        .option-input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        .option-input:focus {
+            border-color: #6366F1;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+        .add-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #6366F1;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+        }
+        .options-list {
+            margin-top: 20px;
+        }
+        .option-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #6366F1;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(-10px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .option-text {
+            font-size: 16px;
+            color: #333;
+        }
+        .delete-btn {
+            color: #ef4444;
+            font-size: 18px;
+        }
+        .footer {
+            background-color: white;
+            padding: 16px 20px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            bottom: 80px;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            text-align: right;
+        }
+        .confirm-btn {
+            background: linear-gradient(135deg, #6366F1, #8B5CF6);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 12px 24px;
+            border-radius: 10px;
+            width: 40%;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(107, 70, 193, 0.3);
+            transition: all 0.3s ease;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+        }
+        .confirm-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(107, 70, 193, 0.4);
+        }
+        .hint-text {
+            text-align: left;
+            color: #888;
+            font-size: 14px;
+            margin-top: 10px;
+            display: inline-block;
+            width: 55%;
+            vertical-align: middle;
+        }
+        @media (max-height: 700px) {
+            .footer {
+                padding: 10px 20px;
+            }
+            
+            .confirm-btn {
+                padding: 10px;
+            }
+            
+            .hint-text {
+                margin-top: 5px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="input-container">
+        <div class="header">
+            <a href="home.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 class="page-title">输入决策选项</h1>
+        </div>
+        
+        <div class="content">
+            <div class="input-section">
+                <h2 class="section-title">您的决策问题是什么？</h2>
+                <div class="input-group">
+                    <input type="text" class="option-input" placeholder="例如：今天晚餐吃什么？" value="今天晚餐吃什么？">
+                </div>
+            </div>
+            
+            <div class="input-section">
+                <h2 class="section-title">添加决策选项（至少2个）</h2>
+                <div class="input-group">
+                    <input type="text" class="option-input" placeholder="输入一个选项...">
+                    <button class="add-btn">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                
+                <div class="options-list">
+                    <div class="option-card">
+                        <span class="option-text">火锅</span>
+                        <button class="delete-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="option-card">
+                        <span class="option-text">披萨</span>
+                        <button class="delete-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="option-card">
+                        <span class="option-text">寿司</span>
+                        <button class="delete-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="option-card">
+                        <span class="option-text">烤肉</span>
+                        <button class="delete-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p class="hint-text" id="hint-text">已添加4个选项，至少需要2个选项</p>
+            <button id="confirm-btn" class="confirm-btn">
+                确认 <i class="fas fa-check ml-1"></i>
+            </button>
+            <p id="error-message" class="error-message">请至少添加2个选项</p>
+        </div>
+    </div>
+</body>
+</html> 

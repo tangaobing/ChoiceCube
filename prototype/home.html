@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>决策魔方 - 首页</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .home-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background-image: url('https://images.unsplash.com/photo-1557682250-33bd709cbe85?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .home-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+        .content {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .logo-container {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .logo {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .app-title {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .app-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            margin-top: 5px;
+            text-align: center;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        .new-decision-btn {
+            background: linear-gradient(135deg, #6366F1, #8B5CF6);
+            color: white;
+            font-size: 18px;
+            font-weight: 500;
+            padding: 16px 32px;
+            border-radius: 50px;
+            margin-top: 40px;
+            box-shadow: 0 4px 20px rgba(107, 70, 193, 0.5);
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        .new-decision-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(107, 70, 193, 0.6);
+        }
+        .new-decision-btn i {
+            margin-right: 10px;
+        }
+        .history-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+        .history-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        .history-btn i {
+            font-size: 22px;
+        }
+        .footer {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+        }
+        .cube-3d {
+            width: 150px;
+            height: 150px;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(-30deg) rotateY(45deg);
+            animation: float 3s ease-in-out infinite;
+        }
+        .cube-face {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: rgba(99, 102, 241, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+        }
+        .front {
+            transform: translateZ(75px);
+        }
+        .back {
+            transform: translateZ(-75px) rotateY(180deg);
+        }
+        .right {
+            transform: translateX(75px) rotateY(90deg);
+        }
+        .left {
+            transform: translateX(-75px) rotateY(-90deg);
+        }
+        .top {
+            transform: translateY(-75px) rotateX(90deg);
+        }
+        .bottom {
+            transform: translateY(75px) rotateX(-90deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="home-container">
+        <a href="history.html" class="history-btn">
+            <i class="fas fa-history"></i>
+        </a>
+        
+        <div class="content">
+            <div class="logo-container">
+                <div class="cube-3d">
+                    <div class="cube-face front"><i class="fas fa-dice-d20"></i></div>
+                    <div class="cube-face back"><i class="fas fa-random"></i></div>
+                    <div class="cube-face right"><i class="fas fa-question"></i></div>
+                    <div class="cube-face left"><i class="fas fa-magic"></i></div>
+                    <div class="cube-face top"><i class="fas fa-lightbulb"></i></div>
+                    <div class="cube-face bottom"><i class="fas fa-check"></i></div>
+                </div>
+                <h1 class="app-title">决策魔方</h1>
+                <p class="app-subtitle">让选择变得简单而有趣</p>
+            </div>
+            
+            <a href="input_options.html" class="new-decision-btn">
+                <i class="fas fa-plus-circle"></i>
+                新建决策
+            </a>
+        </div>
+        
+        <div class="footer">
+            <p>© 2023 决策魔方 - 您的个人决策助手</p>
+        </div>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>命运胶囊 - 动画页</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #0ea5e9;
+            --secondary-blue: #2563eb;
+            --light-blue: #7dd3fc;
+            --dark-bg: #0a1929;
+            --neon-blue: #56cfe1;
+            --text-primary: white;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a1929 0%, #1a365d 100%);
+            color: white;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        .tech-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://picsum.photos/seed/tech/1200/800');
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 1;
+            animation: gridPulse 4s ease-in-out infinite;
+        }
+
+        .hex-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI0MyI+PHBhdGggZD0iTTI1IDAgTDUwIDEyLjVWMzcuNUwyNSA1MEwwIDM3LjVWMTIuNVoiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzBjNGE2ZCIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+');
+            opacity: 0.2;
+            pointer-events: none;
+            z-index: 2;
+            animation: gridRotate 30s linear infinite;
+        }
+
+        .container {
+            position: relative;
+            z-index: 3;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .capsule-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 50px auto;
+            transform-style: preserve-3d;
+            animation: capsuleRotate 10s linear infinite;
+        }
+
+        .capsule {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(37, 99, 235, 0.2));
+            border: 2px solid var(--primary-blue);
+            border-radius: 100px;
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.5),
+                        inset 0 0 30px rgba(14, 165, 233, 0.3);
+            transform-style: preserve-3d;
+            animation: capsulePulse 2s ease-in-out infinite;
+        }
+
+        .dna-helix {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            animation: dnaRotate 5s linear infinite;
+        }
+
+        .dna-strand {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--light-blue);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--light-blue);
+        }
+
+        .loading-progress {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin: 20px auto;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue), var(--light-blue));
+            box-shadow: 0 0 10px var(--primary-blue);
+            animation: progressFill 3s ease-in-out forwards;
+        }
+
+        .loading-text {
+            font-size: 18px;
+            font-weight: 500;
+            text-align: center;
+            margin: 20px 0;
+            opacity: 0.8;
+            text-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+            animation: textPulse 2s ease-in-out infinite;
+        }
+
+        .data-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--light-blue);
+            animation: particleFall 3s linear infinite;
+        }
+
+        .scan-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--light-blue), transparent);
+            animation: scanMove 2s ease-in-out infinite;
+        }
+
+        .options-container {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            animation: optionsFloat 3s ease-in-out infinite;
+        }
+
+        .option {
+            position: absolute;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--primary-blue);
+            border-radius: 20px;
+            font-size: 14px;
+            color: white;
+            backdrop-filter: blur(5px);
+            transform: translate(-50%, -50%);
+            animation: optionPulse 2s ease-in-out infinite;
+        }
+
+        .skip-button {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--primary-blue);
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .skip-button:hover {
+            background: rgba(14, 165, 233, 0.3);
+            box-shadow: 0 0 15px rgba(14, 165, 233, 0.5);
+        }
+
+        .decision-question {
+            position: relative;
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        .question-capsule {
+            position: relative;
+            display: inline-block;
+            padding: 15px 30px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 2px solid var(--neon-blue);
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+            backdrop-filter: blur(5px);
+            clip-path: polygon(
+                10px 0%, 
+                calc(100% - 10px) 0%, 
+                100% 50%, 
+                calc(100% - 10px) 100%, 
+                10px 100%, 
+                0% 50%
+            );
+        }
+
+        .question-capsule::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--neon-blue), transparent);
+            z-index: -1;
+            clip-path: polygon(
+                10px 0%, 
+                calc(100% - 10px) 0%, 
+                100% 50%, 
+                calc(100% - 10px) 100%, 
+                10px 100%, 
+                0% 50%
+            );
+            animation: borderGlow 2s linear infinite;
+        }
+
+        .question-text {
+            font-family: var(--font-tech);
+            font-size: 18px;
+            color: var(--text-primary);
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .question-text .highlight {
+            color: var(--neon-blue);
+            font-weight: 600;
+            text-shadow: 0 0 5px var(--neon-blue);
+        }
+
+        @keyframes capsuleRotate {
+            0% { transform: rotateY(0deg) rotateX(20deg); }
+            100% { transform: rotateY(360deg) rotateX(20deg); }
+        }
+
+        @keyframes dnaRotate {
+            0% { transform: rotateX(0deg); }
+            100% { transform: rotateX(360deg); }
+        }
+
+        @keyframes capsulePulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.1; }
+            50% { opacity: 0.2; }
+        }
+
+        @keyframes gridRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes progressFill {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes textPulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes particleFall {
+            0% { transform: translateY(-100%) translateX(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(100vh) translateX(20px); opacity: 0; }
+        }
+
+        @keyframes scanMove {
+            0%, 100% { transform: translateY(-50%); opacity: 0; }
+            50% { transform: translateY(100vh); opacity: 1; }
+        }
+
+        @keyframes optionsFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes optionPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes borderGlow {
+            0%, 100% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="tech-overlay"></div>
+    <div class="hex-grid"></div>
+    
+    <div class="container">
+        <div class="decision-question">
+            <div class="question-capsule">
+                <p class="question-text">
+                    【AI分析】决策问题：<span class="highlight">是否应该接受这份工作机会？</span>
+                </p>
+            </div>
+        </div>
+        
+        <div class="capsule-container">
+            <div class="capsule">
+                <div class="dna-helix" id="dnaHelix"></div>
+            </div>
+            <div class="scan-line"></div>
+        </div>
+        
+        <div class="loading-text" id="loadingText">命运数据分析中...</div>
+        
+        <div class="loading-progress">
+            <div class="progress-bar"></div>
+        </div>
+        
+        <div class="options-container">
+            <div class="option" style="top: 50%; left: 20%;">火锅</div>
+            <div class="option" style="top: 30%; left: 50%;">披萨</div>
+            <div class="option" style="top: 70%; left: 50%;">寿司</div>
+            <div class="option" style="top: 50%; left: 80%;">烤肉</div>
+        </div>
+    </div>
+    
+    <a href="result_destiny.html" class="skip-button">
+        <i class="fas fa-forward"></i> 跳过动画
+    </a>
+
+    <script>
+        // 创建DNA螺旋结构
+        function createDNAHelix() {
+            const helix = document.getElementById('dnaHelix');
+            const strandsCount = 20;
+            
+            for (let i = 0; i < strandsCount; i++) {
+                const strand = document.createElement('div');
+                strand.className = 'dna-strand';
+                strand.style.left = `${Math.sin(i * Math.PI / 10) * 50 + 50}%`;
+                strand.style.top = `${(i / strandsCount) * 100}%`;
+                strand.style.transform = `translateZ(${Math.cos(i * Math.PI / 10) * 30}px)`;
+                helix.appendChild(strand);
+            }
+        }
+
+        // 创建数据粒子
+        function createParticles() {
+            const container = document.querySelector('.container');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 3}s`;
+                container.appendChild(particle);
+            }
+        }
+
+        // 更新加载文本
+        function updateLoadingText() {
+            const loadingText = document.getElementById('loadingText');
+            const texts = [
+                '命运数据分析中...',
+                '量子计算进行中...',
+                '时空信息整合中...',
+                '未来路径推演中...',
+                '最优结果生成中...'
+            ];
+            let currentIndex = 0;
+            
+            setInterval(() => {
+                currentIndex = (currentIndex + 1) % texts.length;
+                loadingText.textContent = texts[currentIndex];
+            }, 2000);
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', () => {
+            createDNAHelix();
+            createParticles();
+            updateLoadingText();
+            
+            // 3秒后自动跳转到结果页
+            setTimeout(() => {
+                window.location.href = 'result_destiny.html';
+            }, 5000);
+        });
+    </script>
+</body>
+</html> 

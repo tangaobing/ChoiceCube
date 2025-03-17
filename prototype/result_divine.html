@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>神选时刻 - 结果页</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --gold-primary: #b7791f;
+            --gold-light: #fbbf24;
+            --purple-dark: #7e22ce;
+            --purple-light: #a855f7;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Cinzel', serif;
+            background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+            color: var(--gold-primary);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .scroll-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, 
+                rgba(168, 85, 247, 0.1),
+                rgba(216, 180, 254, 0.1),
+                rgba(168, 85, 247, 0.1)
+            );
+            animation: backgroundFlow 10s linear infinite;
+            pointer-events: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            transform: scale(0.9);
+            margin-top: -80px;
+        }
+
+        .result-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(183, 121, 31, 0.3);
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--gold-primary);
+            max-width: 600px;
+            margin: 0 auto;
+            padding-bottom: 20px;
+        }
+
+        .divine-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .result-title {
+            font-family: 'Cinzel', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--gold-primary);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+
+        .result-title::before,
+        .result-title::after {
+            content: '✧';
+            color: var(--purple-dark);
+            margin: 0 10px;
+            font-size: 24px;
+        }
+
+        .result-value {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--purple-dark);
+            text-align: center;
+            margin: 30px 0;
+            text-shadow: 2px 2px 4px rgba(126, 34, 206, 0.3);
+            background: linear-gradient(90deg, #c084fc, #a855f7, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textShine 3s linear infinite;
+        }
+
+        .divine-seal {
+            width: 80px;
+            height: 80px;
+            background: var(--purple-dark);
+            border-radius: 50%;
+            margin: 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold-light);
+            font-size: 30px;
+            box-shadow: 0 0 20px rgba(126, 34, 206, 0.5);
+            transform: rotate(-15deg);
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, var(--gold-primary), var(--purple-dark));
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(126, 34, 206, 0.3);
+        }
+
+        .mystical-decoration {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMCIgaGVpZ2h0PSIzMCI+PHBhdGggZD0iTTE1IDAgTDMwIDE1IEwxNSAzMCBMMCAxNVoiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2I3NzkxZiIvPjwvc3ZnPg==');
+            opacity: 0.3;
+        }
+
+        @keyframes unfold {
+            from {
+                transform: scaleY(0);
+                opacity: 0;
+            }
+            to {
+                transform: scaleY(1);
+                opacity: 1;
+            }
+        }
+
+        .divine-text {
+            font-family: 'Cinzel', serif;
+            text-align: center;
+            color: var(--purple-dark);
+            margin: 8px 0;
+            font-size: 18px;
+            background: linear-gradient(90deg, #c084fc, #a855f7, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textShine 3s linear infinite;
+        }
+
+        .divine-icon {
+            color: var(--gold-primary);
+            margin: 0 5px;
+        }
+
+        @keyframes backgroundFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes textShine {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .decision-summary {
+            position: relative;
+            text-align: center;
+            margin: 15px auto;
+            opacity: 1;
+        }
+
+        .summary-scroll {
+            position: relative;
+            display: inline-block;
+            padding: 10px 25px;
+            background: linear-gradient(135deg, rgba(76, 29, 149, 0.8), rgba(76, 29, 149, 0.7));
+            border: 1px solid var(--gold-primary);
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(183, 121, 31, 0.15);
+            backdrop-filter: blur(5px);
+            overflow: hidden;
+        }
+
+        .summary-text {
+            font-family: 'Cinzel', 'Playfair Display', serif;
+            font-size: 20px;
+            color: var(--gold-primary);
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .summary-text .highlight {
+            color: var(--gold-light);
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+        }
+
+        .result-reveal {
+            display: none;
+        }
+
+        .radial-glow {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .summary-text {
+                font-size: 14px;
+            }
+            .summary-scroll {
+                padding: 6px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-overlay"></div>
+    
+    <div class="container">
+        <div class="result-card">
+            <div class="result-header">
+                <h1 class="result-title">
+                    <i class="fas fa-crown divine-icon"></i>
+                    神选时刻
+                </h1>
+            </div>
+            
+            <div class="divine-seal">
+                <i class="fas fa-scroll"></i>
+            </div>
+            
+            <div class="decision-summary">
+                <div class="summary-scroll">
+                    <p class="summary-text">
+                        <span class="highlight">是否应改变当前职业方向？</span>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="result-value">
+                火锅
+            </div>
+            
+            <div class="divine-text">
+                <i class="fas fa-star divine-icon"></i>
+                神谕指引度: 100%
+            </div>
+            <div class="divine-text">
+                <i class="fas fa-moon divine-icon"></i>
+                命运契合度: 98.7%
+            </div>
+            <div class="divine-text">
+                <i class="fas fa-sun divine-icon"></i>
+                神选评级: ★★★★★
+            </div>
+            
+            <div style="text-align: center; margin-top: 15px;">
+                <button class="action-button">
+                    <i class="fas fa-redo divine-icon"></i>
+                    重新占卜
+                </button>
+                <button class="action-button">
+                    <i class="fas fa-share-alt divine-icon"></i>
+                    分享神谕
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 添加神秘装饰元素
+        function addMysticalDecorations() {
+            const container = document.querySelector('.result-card');
+            for (let i = 0; i < 8; i++) {
+                const decoration = document.createElement('div');
+                decoration.className = 'mystical-decoration';
+                decoration.style.left = `${Math.random() * 100}%`;
+                decoration.style.top = `${Math.random() * 100}%`;
+                decoration.style.transform = `rotate(${Math.random() * 360}deg)`;
+                container.appendChild(decoration);
+            }
+        }
+
+        window.addEventListener('load', addMysticalDecorations);
+    </script>
+</body>
+</html> 

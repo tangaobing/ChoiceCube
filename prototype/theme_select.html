@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>决策魔方 - 主题选择</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .theme-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background-color: #f0f2f5;
+        }
+        .header {
+            background-color: white;
+            padding: 16px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 10;
+        }
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+            margin: 0;
+        }
+        .back-btn {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 20px;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: hidden;
+            margin-top: -20px; /* 页面往上挪动 */
+        }
+        .theme-intro {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .intro-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .intro-text {
+            color: #666;
+            font-size: 14px;
+        }
+        .themes-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .theme-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            height: 200px;
+        }
+        .theme-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        .theme-card.selected {
+            box-shadow: 0 0 0 3px #6366F1, 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        .theme-image {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+        }
+        .theme-info {
+            padding: 10px;
+            text-align: center;
+        }
+        .theme-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin: 0;
+        }
+        
+        /* 命运胶囊主题样式 */
+        .theme-destiny {
+            background: linear-gradient(135deg, #0c4a6e, #0369a1);
+        }
+        .theme-destiny .theme-name {
+            color: #0ea5e9;
+        }
+        
+        /* 神选时刻主题样式 */
+        .theme-divine {
+            background: linear-gradient(135deg, #4c1d95, #7e22ce);
+        }
+        .theme-divine .theme-name {
+            color: #a855f7;
+        }
+        
+        /* 天机轮主题样式 */
+        .theme-fortune {
+            background: linear-gradient(135deg, #1e293b, #334155);
+        }
+        .theme-fortune .theme-name {
+            color: #64748b;
+        }
+        
+        /* 气运池主题样式 */
+        .theme-bubble {
+            background: linear-gradient(135deg, #0f766e, #0e7490);
+        }
+        .theme-bubble .theme-name {
+            color: #06b6d4;
+        }
+        
+        .footer {
+            background-color: white;
+            padding: 16px 20px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 10;
+        }
+        .continue-btn {
+            background: linear-gradient(135deg, #6366F1, #8B5CF6);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 14px;
+            border-radius: 10px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(107, 70, 193, 0.3);
+            transition: all 0.3s ease;
+        }
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(107, 70, 193, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-container">
+        <div class="header">
+            <a href="input_options.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 class="page-title">选择一个主题风格</h1>
+        </div>
+        
+        <div class="content">
+            <!-- <div class="theme-intro">
+                <p class="intro-text">每种主题都有独特的视觉效果和动画体验</p>
+            </div> -->
+            
+            <div class="themes-grid">
+                <!-- 命运胶囊主题 -->
+                <a href="animation_destiny.html" class="theme-card theme-destiny selected">
+                    <img src="https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="命运胶囊主题" class="theme-image" loading="lazy">
+                    <div class="theme-info">
+                        <h3 class="theme-name">命运胶囊</h3>
+                    </div>
+                </a>
+                
+                <!-- 神选时刻主题 -->
+                <a href="animation_divine.html" class="theme-card theme-divine">
+                    <img src="https://images.unsplash.com/photo-1518709414768-a88981a4515d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="神选时刻主题" class="theme-image" loading="lazy">
+                    <div class="theme-info">
+                        <h3 class="theme-name">神选时刻</h3>
+                    </div>
+                </a>
+                
+                <!-- 天机轮主题 -->
+                <a href="animation_fortune.html" class="theme-card theme-fortune">
+                    <img src="https://images.unsplash.com/photo-1563292769-4a7717d398e0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="天机轮主题" class="theme-image" loading="lazy">
+                    <div class="theme-info">
+                        <h3 class="theme-name">天机轮</h3>
+                    </div>
+                </a>
+                
+                <!-- 气运池主题 -->
+                <a href="animation_bubble.html" class="theme-card theme-bubble">
+                    <img src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="气运池主题" class="theme-image" loading="lazy">
+                    <div class="theme-info">
+                        <h3 class="theme-name">气运池</h3>
+                    </div>
+                </a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <a href="animation_destiny.html" class="continue-btn">
+                开始决策 <i class="fas fa-arrow-right ml-1"></i>
+            </a>
+        </div>
+    </div>
+</body>
+</html> 

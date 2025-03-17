@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天机轮 - 结果页</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --ink-black: #111827;
+            --vermilion: #dc2626;
+            --ivory: #f5f5f4;
+            --paper: #f7f3ee;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Noto Serif SC', serif;
+            background: var(--paper);
+            color: var(--ink-black);
+            overflow: hidden;
+        }
+
+
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 350px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            margin: 0 auto;
+            position: relative;
+            z-index: 5;
+            margin-top: -90px;
+        }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 15px 15px 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            width: 100%;
+            box-sizing: border-box;
+            margin: 0 auto;
+        }
+
+        .hexagram-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .result-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--ink-black);
+            margin: 0;
+            padding: 0;
+            position: relative;
+            display: inline-block;
+        }
+
+        .result-title::after {
+            content: '';
+            position: absolute;
+            left: -20px;
+            right: -20px;
+            bottom: -5px;
+            height: 2px;
+            background: var(--vermilion);
+        }
+
+        .result-value {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--vermilion);
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .seal {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        .bagua-seal {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            animation: rotate 20s linear infinite;
+        }
+
+        .bagua-seal::before {
+            content: '☯';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 50px;
+            color: var(--ink-black);
+        }
+
+        .bagua-seal::after {
+            content: '⚍';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+            font-size: 40px;
+            color: var(--ink-black);
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .ink-decoration {
+            position: absolute;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .action-button {
+            background: var(--paper);
+            color: var(--ink-black);
+            border: 2px solid var(--ink-black);
+            padding: 12px 24px;
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .action-button::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: -5px;
+            bottom: -5px;
+            background: var(--vermilion);
+            z-index: -1;
+            transition: all 0.3s ease;
+        }
+
+        .action-button:hover {
+            transform: translate(-2px, -2px);
+        }
+
+        .action-button:hover::after {
+            transform: translate(4px, 4px);
+        }
+
+        .fortune-text {
+            text-align: center;
+            font-size: 18px;
+            color: var(--ink-black);
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fortune-icon {
+            color: var(--vermilion);
+            margin: 0 8px;
+            font-size: 20px;
+        }
+
+        .decision-question {
+            position: relative;
+            text-align: center;
+            margin: 15px auto;
+            max-width: 90%;
+            z-index: 5;
+        }
+
+        .question-paper {
+            position: relative;
+            display: inline-block;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .question-text {
+            font-family: 'FZShuSong', 'Noto Serif SC', serif;
+            font-size: 18px;
+            color: #111827;
+            margin: 0;
+            text-align: center;
+            letter-spacing: 1px;
+            line-height: 1.5;
+        }
+
+        .highlight {
+            color: #a618a9;
+            font-weight: 700;
+        }
+
+
+        /* 新增动画效果 */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        @keyframes glow {
+
+            0%,
+            100% {
+                text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+            }
+
+            50% {
+                text-shadow: 0 0 15px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        @keyframes drift {
+            0% {
+                margin-left: 0;
+                margin-top: 0;
+            }
+
+            25% {
+                margin-left: 10px;
+                margin-top: -5px;
+            }
+
+            50% {
+                margin-left: 0;
+                margin-top: -10px;
+            }
+
+            75% {
+                margin-left: -10px;
+                margin-top: -5px;
+            }
+
+            100% {
+                margin-left: 0;
+                margin-top: 0;
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .bagua-symbol {
+            position: fixed;
+            font-family: 'Noto Serif SC', serif;
+            font-size: 32px;
+            color: var(--ink-black);
+            pointer-events: none;
+            text-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .pulse-animation {
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .glow-animation {
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        .rotate-animation {
+            animation: rotate 15s linear infinite;
+        }
+
+        /* 调整原有旋转动画 */
+        @keyframes rotateSymbol {
+            0% {
+                transform: rotate(0deg) translate3d(0, 0, 0) rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg) translate3d(0, 0, 0) rotate(-360deg);
+            }
+        }
+
+        .bagua-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: visible;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="result-card">
+            <div class="result-header" style="grid-column: 1 / -1;">
+                <h1 class="result-title">天机轮</h1>
+            </div>
+
+            <div class="decision-question">
+                <div class="question-paper">
+                    <p class="question-text">
+                        <span class="highlight">此次跳槽，可行否？</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="result-value" style="grid-column: 1 / -1; color: rgba(0, 0, 0, 0.6);">
+                火锅
+            </div>
+
+            <div class="fortune-text" style="grid-column: 1 / -1; ">
+                <i class="fas fa-compass fortune-icon"></i>
+                天机指数: 100%
+            </div>
+
+            <div class="fortune-text" style="grid-column: 1 / -1;">
+                <i class="fas fa-yin-yang fortune-icon"></i>
+                五行契合: 98.7%
+            </div>
+
+            <div class="fortune-text" style="grid-column: 1 / -1;">
+                <i class="fas fa-star fortune-icon"></i>
+                卦象评级: ★★★★★
+            </div>
+
+            <div style="grid-column: 1 / -1; text-align: center; margin-top: 30px; margin-bottom: 20px;">
+                <button class="action-button" onclick="window.location.href='animation_fortune.html'">
+                    <i class="fas fa-sync-alt fortune-icon"></i>
+                    重新卜卦
+                </button>
+                <button class="action-button">
+                    <i class="fas fa-share-alt fortune-icon"></i>
+                    分享卦象
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="bagua-background" id="baguaContainer"></div>
+
+    <script>
+        // 添加水墨装饰
+        function addInkDecorations() {
+            const container = document.querySelector('.container');
+            const inkPatterns = [
+                '○', '●', '△', '▲', '□', '■'
+            ];
+
+            for (let i = 0; i < 12; i++) {
+                const ink = document.createElement('div');
+                ink.className = 'ink-decoration';
+                ink.textContent = inkPatterns[Math.floor(Math.random() * inkPatterns.length)];
+                ink.style.left = `${Math.random() * 100}%`;
+                ink.style.top = `${Math.random() * 100}%`;
+                ink.style.fontSize = `${Math.random() * 30 + 20}px`;
+                ink.style.transform = `rotate(${Math.random() * 360}deg)`;
+                container.appendChild(ink);
+            }
+        }
+
+        window.addEventListener('load', addInkDecorations);
+
+        // 添加八卦符号背景
+        function createBaguaBackground() {
+            const container = document.getElementById('baguaContainer');
+            const symbols = ['☰', '☱', '☲', '☳', '☴', '☵', '☶', '☷'];
+            const animations = ['float-animation', 'pulse-animation', 'glow-animation', 'rotate-animation'];
+
+            // 清空容器
+            container.innerHTML = '';
+
+            // 为每个卦象创建一个实例，总共8个
+            symbols.forEach((symbol, index) => {
+                const element = document.createElement('div');
+                element.className = 'bagua-symbol';
+                element.textContent = symbol;
+
+                // 添加2个随机动画类
+                const shuffledAnimations = [...animations].sort(() => 0.5 - Math.random());
+                element.classList.add(shuffledAnimations[0]);
+                element.classList.add(shuffledAnimations[1]);
+
+                // 均匀分布在屏幕周围
+                const angle = (index / symbols.length) * 2 * Math.PI;
+                const radius = Math.min(window.innerWidth, window.innerHeight) * 0.4;
+                const x = window.innerWidth / 2 + radius * Math.cos(angle);
+                const y = window.innerHeight / 2 + radius * Math.sin(angle);
+
+                element.style.left = `${x}px`;
+                element.style.top = `${y}px`;
+
+                // 样式
+                element.style.fontSize = `${36 + Math.floor(Math.random() * 20)}px`;
+                element.style.opacity = 0.6 + Math.random() * 0.4;
+
+                // 不同的延迟时间
+                element.style.animationDelay = `${index * 0.1}s`;
+
+                container.appendChild(element);
+            });
+        }
+
+        // 页面加载和调整大小时创建八卦背景
+        window.addEventListener('load', () => {
+            addInkDecorations();
+            createBaguaBackground();
+        });
+
+        window.addEventListener('resize', createBaguaBackground);
+    </script>
+</body>
+
+</html>

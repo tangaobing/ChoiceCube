@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>气运池 - 动画页</title>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --water-light: #7dd3fc;
+            --water-medium: #0ea5e9;
+            --water-dark: #0369a1;
+            --glow: #38bdf8;
+            --blue-primary: #3b82f6;
+            --cyan-light: #06b6d4;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, var(--water-dark), var(--water-medium));
+            color: white;
+            overflow: hidden;
+        }
+
+        .water-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                to bottom,
+                transparent,
+                rgba(6, 182, 212, 0.1)
+            );
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .fortune-pool {
+            display: none;
+        }
+
+        .water-ripple {
+            display: none;
+        }
+
+        .options-container {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .options-grid {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .option {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            font-family: 'ZCOOL XiaoWei', sans-serif;
+            font-size: 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option.selected {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .loading-text {
+            margin: 30px 0;
+            font-family: 'ZCOOL XiaoWei', sans-serif;
+            font-size: 24px;
+            text-align: center;
+            color: white;
+            text-shadow: 0 0 10px var(--glow);
+            animation: textGlow 2s ease-in-out infinite;
+        }
+
+        .confirm-button {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            color: white;
+            font-family: 'ZCOOL XiaoWei', sans-serif;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .confirm-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 15px var(--glow);
+        }
+
+        .skip-button {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            color: white;
+            font-family: 'ZCOOL XiaoWei', sans-serif;
+            font-size: 18px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .skip-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 15px var(--glow);
+        }
+
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: bubbleFloat 3s ease-in infinite;
+        }
+
+        @keyframes bubbleFloat {
+            0% {
+                transform: translateY(100%) scale(0);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100%) scale(1);
+                opacity: 0;
+            }
+        }
+
+        @keyframes textGlow {
+            0%, 100% {
+                opacity: 0.6;
+                text-shadow: 0 0 10px var(--glow);
+            }
+            50% {
+                opacity: 1;
+                text-shadow: 0 0 20px var(--glow);
+            }
+        }
+
+        .decision-question {
+            position: relative;
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            animation: floatIn 1.5s ease-out;
+        }
+
+        .question-bubble {
+            position: relative;
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(147, 197, 253, 0.2));
+            border: 2px solid var(--blue-primary);
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+            backdrop-filter: blur(5px);
+            overflow: hidden;
+        }
+
+        .question-text {
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size: 20px;
+            color: white;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .question-text .highlight {
+            color: var(--cyan-light);
+            font-weight: 600;
+        }
+
+        .title-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .title-text {
+            font-family: 'ZCOOL XiaoWei', sans-serif;
+            font-size: 32px;
+            color: white;
+            text-shadow: 0 0 15px var(--glow);
+            margin: 0 10px;
+        }
+
+        .wave-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        @keyframes floatIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="water-overlay"></div>
+    
+    <div class="container">
+        <div class="title-container">
+            <i class="fas fa-water wave-icon"></i>
+            <h1 class="title-text">气运池</h1>
+        </div>
+        
+        <div class="decision-question">
+            <div class="question-bubble">
+                <p class="question-text">
+                    【气运启示】今日抉择：<span class="highlight">是否该尝试新的美食体验？</span>
+                </p>
+            </div>
+        </div>
+        
+        <div class="loading-text" id="loadingText">气运正在汇聚...</div>
+        
+        <div class="options-container">
+            <div class="options-grid">
+                <div class="option" onclick="selectOption(this)" data-value="火锅">火锅</div>
+                <div class="option" onclick="selectOption(this)" data-value="披萨">披萨</div>
+                <div class="option" onclick="selectOption(this)" data-value="寿司">寿司</div>
+                <div class="option" onclick="selectOption(this)" data-value="烤肉">烤肉</div>
+            </div>
+            <button class="confirm-button" onclick="confirmSelection()">确认选择</button>
+        </div>
+    </div>
+    
+    <a href="result_bubble.html" class="skip-button">
+        <i class="fas fa-water"></i> 揭晓气运
+    </a>
+
+    <script>
+        // 创建气泡效果
+        function createBubbles() {
+            const container = document.querySelector('.container');
+            
+            setInterval(() => {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                bubble.style.left = `${Math.random() * 100}%`;
+                bubble.style.width = `${10 + Math.random() * 20}px`;
+                bubble.style.height = bubble.style.width;
+                container.appendChild(bubble);
+                
+                setTimeout(() => bubble.remove(), 3000);
+            }, 300);
+        }
+
+        // 更新加载文本
+        function updateLoadingText() {
+            const loadingText = document.getElementById('loadingText');
+            const texts = [
+                '气运正在汇聚...',
+                '福运在流转...',
+                '吉兆显灵...',
+                '运势涌动...',
+                '命运在流淌...'
+            ];
+            let currentIndex = 0;
+            
+            setInterval(() => {
+                currentIndex = (currentIndex + 1) % texts.length;
+                loadingText.textContent = texts[currentIndex];
+            }, 2000);
+        }
+
+        // 选择选项
+        function selectOption(element) {
+            // 移除其他选项的选中状态
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            // 添加当前选项的选中状态
+            element.classList.add('selected');
+            selectedOption = element.dataset.value;
+        }
+
+        // 确认选择
+        function confirmSelection() {
+            if (selectedOption) {
+                // 存储选择的选项
+                localStorage.setItem('selectedOption', selectedOption);
+                // 跳转到结果页
+                window.location.href = 'result_bubble.html';
+            } else {
+                alert('请先选择一个选项');
+            }
+        }
+
+        let selectedOption = null;
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', () => {
+            createBubbles();
+            updateLoadingText();
+        });
+    </script>
+</body>
+</html> 

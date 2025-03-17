@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>决策魔方 - 结果页</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+            background-color: #000;
+        }
+        .result-container {
+            height: 100%;
+            width: 100%;
+            position: relative;
+            background: linear-gradient(135deg, #0a1929, #1a365d);
+            overflow: hidden;
+        }
+        .result-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            opacity: 0.2;
+            z-index: 1;
+            filter: brightness(0.7) blur(3px);
+        }
+        .circuit-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1639322537504-6427a16b0a28?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            opacity: 0.15;
+            z-index: 1;
+            mix-blend-mode: screen;
+        }
+        .hexagon-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1510906594845-bc082582c8cc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            opacity: 0.1;
+            z-index: 1;
+        }
+        .content-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+        .result-content {
+            position: relative;
+            z-index: 3;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .question-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(10, 136, 255, 0.5);
+        }
+        .result-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(125, 211, 252, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            width: 85%;
+            max-width: 350px;
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.3), 
+                        0 0 40px rgba(14, 165, 233, 0.1),
+                        inset 0 0 10px rgba(14, 165, 233, 0.1);
+            text-align: center;
+            animation: fadeIn 1s ease-out, float 5s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(125, 211, 252, 0.1) 0%,
+                rgba(37, 99, 235, 0.1) 25%,
+                rgba(14, 165, 233, 0.1) 50%,
+                rgba(37, 99, 235, 0.1) 75%,
+                rgba(125, 211, 252, 0.1) 100%
+            );
+            transform: rotate(30deg);
+            z-index: -1;
+            animation: shimmer 10s linear infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: rotate(30deg) translateX(-30%); }
+            100% { transform: rotate(30deg) translateX(30%); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .result-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .result-value {
+            background: linear-gradient(90deg, #0ea5e9, #2563eb, #7dd3fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+            position: relative;
+        }
+        .result-value::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(90deg, #0ea5e9, #2563eb);
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(14, 165, 233, 0.8);
+        }
+        .result-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        .tech-decoration {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .tech-circle {
+            position: absolute;
+            border: 1px solid rgba(125, 211, 252, 0.3);
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(14, 165, 233, 0.2);
+            opacity: 0.5;
+        }
+        .tech-circle-1 {
+            width: 100px;
+            height: 100px;
+            top: 10%;
+            left: 10%;
+            animation: pulse 4s infinite ease-in-out;
+        }
+        .tech-circle-2 {
+            width: 150px;
+            height: 150px;
+            bottom: 10%;
+            right: 10%;
+            animation: pulse 6s infinite ease-in-out;
+        }
+        .tech-circle-3 {
+            width: 80px;
+            height: 80px;
+            top: 40%;
+            right: 20%;
+            animation: pulse 5s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            font-size: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover {
+            transform: translateY(-3px);
+        }
+        .btn-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 20px;
+            box-shadow: 0 0 15px rgba(14, 165, 233, 0.5);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(125, 211, 252, 0.3);
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover .btn-icon {
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.8);
+        }
+        .save-btn .btn-icon {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(37, 99, 235, 0.2));
+        }
+        .share-btn .btn-icon {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(37, 99, 235, 0.2));
+        }
+        .restart-btn .btn-icon {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(37, 99, 235, 0.2));
+        }
+        .home-btn .btn-icon {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(37, 99, 235, 0.2));
+        }
+        .theme-selector {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            z-index: 5;
+        }
+        .theme-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .theme-dot.active {
+            background-color: #0ea5e9;
+            box-shadow: 0 0 10px rgba(14, 165, 233, 0.8);
+            transform: scale(1.2);
+        }
+        .data-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .data-particle {
+            position: absolute;
+            width: 2px;
+            height: 50px;
+            background: linear-gradient(to bottom, rgba(14, 165, 233, 0.8), rgba(14, 165, 233, 0));
+            opacity: 0;
+            animation: dataFall linear forwards;
+        }
+        @keyframes dataFall {
+            0% { transform: translateY(-50px); opacity: 0.8; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+        
+        /* 主题切换样式 */
+        .result-container.theme-destiny {
+            background: linear-gradient(135deg, #0a1929, #1a365d);
+        }
+        .result-container.theme-destiny .result-bg {
+            background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        }
+        .result-container.theme-destiny .content-overlay {
+            background: radial-gradient(circle at center, rgba(14, 165, 233, 0.1) 0%, rgba(14, 165, 233, 0) 70%);
+        }
+        .result-container.theme-destiny .result-value {
+            background: linear-gradient(90deg, #0ea5e9, #2563eb, #7dd3fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+        }
+        
+        .result-container.theme-divine {
+            background: linear-gradient(135deg, #4c1d95, #7e22ce);
+        }
+        .result-container.theme-divine .result-bg {
+            background-image: url('https://images.unsplash.com/photo-1518709414768-a88981a4515d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        }
+        .result-container.theme-divine .content-overlay {
+            background: radial-gradient(circle at center, rgba(186, 104, 200, 0.2) 0%, rgba(186, 104, 200, 0) 70%);
+        }
+        .result-container.theme-divine .result-value {
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+        }
+        
+        .result-container.theme-fortune {
+            background: #f5f5f5;
+        }
+        .result-container.theme-fortune .result-bg {
+            background-image: url('https://images.unsplash.com/photo-1563292769-4a7717d398e0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            opacity: 0.9;
+        }
+        .result-container.theme-fortune .content-overlay {
+            background: radial-gradient(circle at center, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+        }
+        .result-container.theme-fortune .question-text,
+        .result-container.theme-fortune .result-label,
+        .result-container.theme-fortune .result-value,
+        .result-container.theme-fortune .result-description {
+            color: #000;
+        }
+        .result-container.theme-fortune .result-value {
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+        .result-container.theme-fortune .result-card {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .result-container.theme-fortune .action-btn {
+            color: #000;
+        }
+        
+        .result-container.theme-bubble {
+            background: linear-gradient(135deg, #0e7490, #0891b2);
+        }
+        .result-container.theme-bubble .result-bg {
+            background-image: url('https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        }
+        .result-container.theme-bubble .content-overlay {
+            background: radial-gradient(circle at center, rgba(6, 182, 212, 0.2) 0%, rgba(6, 182, 212, 0) 70%);
+        }
+        .result-container.theme-bubble .result-value {
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="result-container theme-destiny" id="resultContainer">
+        <div class="result-bg" id="resultBg"></div>
+        <div class="circuit-overlay"></div>
+        <div class="hexagon-grid"></div>
+        <div class="content-overlay"></div>
+        
+        <div class="tech-decoration">
+            <div class="tech-circle tech-circle-1"></div>
+            <div class="tech-circle tech-circle-2"></div>
+            <div class="tech-circle tech-circle-3"></div>
+        </div>
+        
+        <div class="data-particles" id="dataParticles">
+            <!-- 动态生成的数据粒子 -->
+        </div>
+        
+        <div class="result-content">
+            <p class="question-text">今天晚餐吃什么？</p>
+            
+            <div class="result-card">
+                <p class="result-label" id="resultLabel">命运胶囊为您选择了</p>
+                <h1 class="result-value">火锅</h1>
+                <p class="result-description">根据命运胶囊的计算，火锅是今晚最适合您的选择。热气腾腾的火锅将带给您满足感和幸福感。</p>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="#" class="action-btn save-btn">
+                    <div class="btn-icon">
+                        <i class="fas fa-save"></i>
+                    </div>
+                    <span>保存</span>
+                </a>
+                <a href="#" class="action-btn share-btn">
+                    <div class="btn-icon">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <span>分享</span>
+                </a>
+                <a href="input_options.html" class="action-btn restart-btn">
+                    <div class="btn-icon">
+                        <i class="fas fa-redo"></i>
+                    </div>
+                    <span>重新决策</span>
+                </a>
+                <a href="home.html" class="action-btn home-btn">
+                    <div class="btn-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <span>首页</span>
+                </a>
+            </div>
+        </div>
+        
+        <div class="theme-selector">
+            <div class="theme-dot active" data-theme="destiny" data-label="命运胶囊为您选择了"></div>
+            <div class="theme-dot" data-theme="divine" data-label="神圣之力为您选择了"></div>
+            <div class="theme-dot" data-theme="fortune" data-label="天机轮为您推演出"></div>
+            <div class="theme-dot" data-theme="bubble" data-label="气运池为您汇聚了"></div>
+        </div>
+    </div>
+    
+    <script>
+        // 生成数据粒子效果
+        function createDataParticles() {
+            const particlesContainer = document.getElementById('dataParticles');
+            
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('data-particle');
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = Math.random() * 3 + 2 + 's';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // 主题切换功能
+        function setupThemeSelector() {
+            const themeDots = document.querySelectorAll('.theme-dot');
+            const resultContainer = document.getElementById('resultContainer');
+            const resultLabel = document.getElementById('resultLabel');
+            
+            // 背景图片映射
+            const bgImages = {
+                'destiny': 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+                'divine': 'https://images.unsplash.com/photo-1518709414768-a88981a4515d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+                'fortune': 'https://images.unsplash.com/photo-1563292769-4a7717d398e0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+                'bubble': 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'
+            };
+            
+            themeDots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    const theme = this.getAttribute('data-theme');
+                    const label = this.getAttribute('data-label');
+                    
+                    // 移除所有主题类
+                    resultContainer.classList.remove('theme-destiny', 'theme-divine', 'theme-fortune', 'theme-bubble');
+                    
+                    // 添加选中的主题类
+                    resultContainer.classList.add('theme-' + theme);
+                    
+                    // 更新背景图片
+                    document.getElementById('resultBg').style.backgroundImage = `url('${bgImages[theme]}')`;
+                    
+                    // 更新标签文本
+                    resultLabel.textContent = label;
+                    
+                    // 更新活动状态
+                    themeDots.forEach(d => d.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+        
+        // 获取URL参数
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+        
+        // 页面加载完成后执行
+        window.addEventListener('DOMContentLoaded', () => {
+            createDataParticles();
+            setupThemeSelector();
+            
+            // 检查URL参数中是否有主题信息
+            const theme = getUrlParameter('theme');
+            if (theme) {
+                const themeDot = document.querySelector(`.theme-dot[data-theme="${theme}"]`);
+                if (themeDot) {
+                    themeDot.click();
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

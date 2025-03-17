@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>气运池 - 结果页</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --teal: #0d9488;
+            --cyan: #06b6d4;
+            --cyan-light: #a5f3fc;
+            --blue: #0ea5e9;
+            --green: #10b981;
+            --bubble-bg: rgba(6, 182, 212, 0.2);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%);
+            color: white;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .water-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://picsum.photos/seed/water/1200/800') center/cover;
+            opacity: 0.1;
+            pointer-events: none;
+            animation: wave 20s linear infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            box-sizing: border-box;
+            margin-top: -80px; /* 调整这个值来控制移动的距离 */
+        }
+
+        .bubble-card {
+            background: var(--bubble-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 30px 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .bubble-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: shimmer 3s linear infinite;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wave-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .result-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: white;
+            margin: 0;
+            padding: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-value {
+            font-size: 48px;
+            font-weight: 600;
+            color: white;
+            text-align: center;
+            margin: 20px 0;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            animation: float 3s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        .ripple {
+            display: none;
+        }
+
+        .action-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 10px auto;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            width: 80%;
+            max-width: 200px;
+            display: block;
+        }
+
+        .action-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .luck-text {
+            text-align: center;
+            font-size: 18px;
+            color: white;
+            margin: 12px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .luck-icon {
+            color: var(--cyan-light);
+            margin: 0 8px;
+            font-size: 20px;
+        }
+
+        .decision-summary {
+            position: relative;
+            text-align: center;
+            margin: 20px auto;
+            transform: scale(0.95);
+        }
+
+        .summary-bubble {
+            display: inline-block;
+            padding: 10px 25px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-text {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 16px;
+            color: white;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .summary-text .highlight {
+            color: var(--cyan-light);
+            font-weight: 600;
+        }
+
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        @keyframes wave {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-50%) rotate(360deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="water-overlay"></div>
+    
+    <div class="container">
+        <div class="bubble-card">
+            <div class="result-header">
+                <i class="fas fa-water wave-icon"></i>
+                <h1 class="result-title">气运池</h1>
+            </div>
+            
+            <div class="result-value">
+                火锅
+            </div>
+            
+            <div class="luck-text">
+                <i class="fas fa-tint luck-icon"></i>
+                气运指数: 100%
+            </div>
+            
+            <div class="luck-text">
+                <i class="fas fa-magic luck-icon"></i>
+                运势契合: 98.7%
+            </div>
+            
+            <div class="luck-text">
+                <i class="fas fa-star luck-icon"></i>
+                福运评级: ★★★★★
+            </div>
+            
+            <div class="decision-summary">
+                <div class="summary-bubble">
+                    <p class="summary-text">
+                        今日抉择：<span class="highlight">是否该尝试新的美食体验？</span>【已解答】
+                    </p>
+                </div>
+            </div>
+            
+            <button class="action-button">
+                <i class="fas fa-sync-alt luck-icon"></i>
+                重新汲取
+            </button>
+            <button class="action-button">
+                <i class="fas fa-share-alt luck-icon"></i>
+                分享运势
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 添加气泡效果
+        function addBubbles() {
+            const container = document.querySelector('.bubble-card');
+            for (let i = 0; i < 15; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                bubble.style.width = `${Math.random() * 30 + 10}px`;
+                bubble.style.height = bubble.style.width;
+                bubble.style.left = `${Math.random() * 100}%`;
+                bubble.style.top = `${Math.random() * 100}%`;
+                bubble.style.animationDelay = `${Math.random() * 2}s`;
+                container.appendChild(bubble);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            addBubbles();
+        });
+    </script>
+</body>
+</html> 
